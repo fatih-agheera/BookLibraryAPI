@@ -3,26 +3,26 @@ using BusinessLayer.Exceptions;
 using BusinessLayer.Models.Book;
 using BusinessLayer.Services.Contracts;
 using DataLayer.Models;
-using DataLayer.Repositories.UnitOfWork;
+using DataLayer.Repositories.Contracts;
 
 namespace BusinessLayer.Services.Implementations
 {
 	public class BookService : IBookService
 	{
-		private readonly IRepositoriesWrapper _repositoriesWrapper;
+		private readonly IBookRepository _bookRepository;
 
 		private readonly IMapper _mapper;
 
-		public BookService(IRepositoriesWrapper repositoriesWrapper, IMapper mapper)
+		public BookService(IBookRepository bookRepository, IMapper mapper)
 		{
-			_repositoriesWrapper = repositoriesWrapper;
+			_bookRepository = bookRepository;
 			_mapper = mapper;
 		}
 
 
-		public Book GetById(int id)
+		public Book GetById(string id)
 		{
-			var book = _repositoriesWrapper.Books.Get(id);
+			var book = _bookRepository.Get(id);
 			if (book == null)
 			{
 				throw new DbEntityNotFoundException($"Book with id {id} not found int the database.");
@@ -31,11 +31,11 @@ namespace BusinessLayer.Services.Implementations
 			return book;
 		}
 		public IEnumerable<Book> GetAll()
-			=> _repositoriesWrapper.Books.GetAll();
+			=> _bookRepository.GetAll();
 
 		public Book GetByIsbn(string isbn)
 		{
-			var book = _repositoriesWrapper.Books.GetByIsbn(isbn);
+			var book = _bookRepository.GetByIsbn(isbn);
 			if (book == null)
 			{
 				throw new DbEntityNotFoundException($"Book with ISBN {isbn} not found int the database.");
@@ -46,7 +46,7 @@ namespace BusinessLayer.Services.Implementations
 
 		public Book Create(CreateBookDto createBookDto)
 		{
-			var isUniqueIsbn = _repositoriesWrapper.Books.IsUniqueIsbn(createBookDto.Isbn);
+			var isUniqueIsbn = _bookRepository.IsUniqueIsbn(createBookDto.Isbn);
 
 			if (!isUniqueIsbn)
 			{
@@ -54,13 +54,13 @@ namespace BusinessLayer.Services.Implementations
 			}
 
 			var book = _mapper.Map<Book>(createBookDto);
-			_repositoriesWrapper.Books.Save(book);
+			_bookRepository.Save(book);
 			return book;
 		}
 
-		public Book Update(int id, UpdateBookDto updateBookDto)
+		public Book Update(string id, UpdateBookDto updateBookDto)
 		{
-			var bookToUpdate = _repositoriesWrapper.Books.Get(id);
+			var bookToUpdate = _bookRepository.Get(id);
 
 			if (bookToUpdate == null)
 			{
@@ -68,13 +68,13 @@ namespace BusinessLayer.Services.Implementations
 			}
 
 			_mapper.Map(updateBookDto, bookToUpdate);
-			_repositoriesWrapper.Books.Update(bookToUpdate);
+			_bookRepository.Update(bookToUpdate);
 
 			return bookToUpdate;
 		}
 
 
-		public Book Delete(int id)
+		public Book Delete(string id)
 		{
 			var book = GetById(id);
 
@@ -83,7 +83,7 @@ namespace BusinessLayer.Services.Implementations
 				throw new DbEntityNotFoundException($"Book with id {id} not found in the database.");
 			}
 
-			return _repositoriesWrapper.Books.Remove(book);
+			return _bookRepository.Remove(book);
 		}
 	}
 }

@@ -3,20 +3,20 @@ using BusinessLayer.Exceptions;
 using BusinessLayer.Models.User;
 using BusinessLayer.Services.Contracts;
 using DataLayer.Models;
-using DataLayer.Repositories.UnitOfWork;
+using DataLayer.Repositories.Contracts;
 
 namespace BusinessLayer.Services.Implementations
 {
 	public class UserService : IUserService
 	{
-		private readonly IRepositoriesWrapper _repositoriesWrapper;
+		private readonly IUserRepository _userRepository;
 		private readonly IMapper _mapper;
 		private readonly ITokenService _tokenService;
 		private readonly IPasswordService _passwordService;
 
-		public UserService(IRepositoriesWrapper repositoriesWrapper, IMapper mapper, ITokenService tokenService, IPasswordService passwordService)
+		public UserService(IUserRepository userRepository, IMapper mapper, ITokenService tokenService, IPasswordService passwordService)
 		{
-			_repositoriesWrapper = repositoriesWrapper;
+			_userRepository = userRepository;
 			_mapper = mapper;
 			_tokenService = tokenService;
 			_passwordService = passwordService;
@@ -24,7 +24,7 @@ namespace BusinessLayer.Services.Implementations
 
 		public AuthorizedUserDto Register(RegistrationUserDto item)
 		{
-			var isUniqueLogin = _repositoriesWrapper.Users.IsUniqueLogin(item.Login);
+			var isUniqueLogin = _userRepository.IsUniqueLogin(item.Login);
 
 			if (!isUniqueLogin)
 			{
@@ -33,7 +33,7 @@ namespace BusinessLayer.Services.Implementations
 
 			var user = _mapper.Map<User>(item);
 			user.Password = _passwordService.HashPassword(user.Password);
-			_repositoriesWrapper.Users.Save(user);
+			_userRepository.Save(user);
 
 			var authorizedUser = _mapper.Map<AuthorizedUserDto>(user);
 			authorizedUser.JwtToken = _tokenService.CreateToken(user);
@@ -43,7 +43,7 @@ namespace BusinessLayer.Services.Implementations
 
 		public AuthorizedUserDto Login(LoginUserDto loginUserDto)
 		{
-			var user = _repositoriesWrapper.Users.GetUserByLogin(loginUserDto.Login);
+			var user = _userRepository.GetUserByLogin(loginUserDto.Login);
 
 			if (user is null)
 			{

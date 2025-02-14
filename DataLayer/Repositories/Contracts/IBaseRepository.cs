@@ -6,7 +6,7 @@ namespace DataLayer.Repositories.Contracts
 	{
 		IEnumerable<DbModel> GetAll();
 
-		DbModel? Get(int id);
+		DbModel? Get(string id);
 
 		DbModel Save(DbModel model);
 

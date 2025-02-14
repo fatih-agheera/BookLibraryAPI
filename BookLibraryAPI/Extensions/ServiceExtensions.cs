@@ -1,34 +1,32 @@
-﻿using BusinessLayer.Infrastructure.Mapper;
-using DataLayer.Data;
-using DataLayer.Repositories.UnitOfWork;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
 using System.Text;
 using BookLibraryAPI.MiddlewareHandlers;
 using BusinessLayer.Exceptions;
+using BusinessLayer.Infrastructure.Mapper;
+using BusinessLayer.Infrastructure.Validators.Book;
 using BusinessLayer.Services.Contracts;
 using BusinessLayer.Services.Implementations;
+using DataLayer.Utils;
+using FluentValidation;
 using FluentValidation.AspNetCore;
-using BusinessLayer.Infrastructure.Validators.Book;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
+using MongoDB.Driver;
 
 namespace BookLibraryAPI.Extensions
 {
 	public static class ServiceExtensions
 	{
-		public static void AddRepositoriesWrapper(this IServiceCollection services)
+		public static void ConfigureMongoClient(this IServiceCollection services, IConfiguration config)
 		{
-			services.AddScoped<IRepositoriesWrapper, RepositoriesWrapper>();
-		}
-
-		public static void ConfigureMsSqlServerContext(this IServiceCollection services, IConfiguration config)
-		{
-			var connectionString = config.GetConnectionString("ConnectionStringLibraryApiDbSql")
-								   ?? throw new ConfigurationKeyNotFoundException("ConnectionString key is null!");
-			services.AddDbContext<LibraryDbContext>(options => options.UseSqlServer(connectionString));
+			services.AddSingleton<IMongoClient>(sp =>
+			{
+				var configuration = sp.GetRequiredService<IOptions<MongoDbConfiguration>>().Value;
+				var settings = MongoClientSettings.FromConnectionString(configuration.ConnectionURI);
+				return new MongoClient(settings);
+			});
 		}
 
 		public static void ConfigureAutoMapper(this IServiceCollection services)

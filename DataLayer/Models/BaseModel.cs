@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace DataLayer.Models
 {
 	public abstract class BaseModel
 	{
-		[Key]
-		public int Id { get; set; }
+		[BsonElement("_id")]
+		[BsonId]
+		[BsonRepresentation(BsonType.ObjectId)]
+		public string Id { get; set; }
 	}
 }

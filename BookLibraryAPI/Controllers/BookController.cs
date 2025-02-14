@@ -11,6 +11,7 @@ namespace BookLibraryAPI.Controllers
 	/// </summary>
 	[Route("api/[controller]/[action]")]
 	[ApiController]
+	[Authorize]
 	public class BookController : ControllerBase
 	{
 		private readonly IBookService _bookService;
@@ -40,7 +41,7 @@ namespace BookLibraryAPI.Controllers
 		[HttpGet("{id}")]
 		[ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
 		[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-		public IActionResult GetById(int id)
+		public IActionResult GetById(string id)
 		{
 			var book = _bookService.GetById(id);
 			return Ok(book);
@@ -90,7 +91,7 @@ namespace BookLibraryAPI.Controllers
 		[ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-		public IActionResult Update(int id, [FromBody] UpdateBookDto? book)
+		public IActionResult Update(string id, [FromBody] UpdateBookDto? book)
 		{
 			if (book == null)
 			{
@@ -109,7 +110,7 @@ namespace BookLibraryAPI.Controllers
 		[ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
 		[ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-		public IActionResult Delete(int id)
+		public IActionResult Delete(string id)
 		{
 			var deletedBook = _bookService.Delete(id);
 			return Ok(deletedBook);
