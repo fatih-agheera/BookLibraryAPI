@@ -1,7 +1,7 @@
-# BookLibraryAPI project for Modsen Company
+# BookLibraryAPI project for Case Study
 This project demonstrates my skills in developing a CRUD Web Api application using the following technologies:  
 
- - .NET 6.0
+ - .NET 9.0
  - Three-layer architecture
  - Entity Framework Core
  - Microsoft SQL Server
@@ -15,10 +15,6 @@ The application has 2 controllers: CRUD (Create, read, update, delete) operation
 
 # Run Locally
 Clone the project
-
-```bash
-  git clone https://github.com/HaidukEvgen/BookLibraryAPI
-```
 
 Go to the project directory
 
