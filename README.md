@@ -4,7 +4,7 @@ This project demonstrates my skills in developing a CRUD Web Api application usi
  - .NET 9.0
  - Three-layer architecture
  - Entity Framework Core
- - Microsoft SQL Server
+ - Mongo DB
  - Authentication via JwtBearer
  - Swagger UI
  - AutoMapper
@@ -12,40 +12,6 @@ This project demonstrates my skills in developing a CRUD Web Api application usi
 
 # Description
 The application has 2 controllers: CRUD (Create, read, update, delete) operations for Books and Register/Login actions. Book library is 'Read only' for Anonymous users and 'Fully accessible' for Authenticated ones.
-
-# Run Locally
-Clone the project
-
-Go to the project directory
-
-```bash
-  cd BookLibraryAPI
-```
-
-Set your connection string to MS SQL Server in "ConnectionStrings/ConnectionStringLibraryApiDbSql" inside appsettings.json    
-
-`"ConnectionStrings": {
-    "ConnectionStringLibraryApiDbSql": "Data Source=<ServerName>;Initial Catalog=<CatalogName>"
-  }`
-
-Create Database using CLI 
-
-```bash
-dotnet ef database update --project DataLayer\DataLayer.csproj --startup-project BookLibraryAPI\BookLibraryAPI.csproj --context DataLayer.Data.LibraryDbContext --configuration Debug 20230928120140_InitDB
-```
-If you are getting an error, it is possible that you don't have Entity Framework Core .NET Command-line Tools installed. In this case run:
-```bash
-dotnet tool install -g dotnet-ef --ignore-failed-sources
-```
-Start the server
-
-```bash
-  dotnet run --project BookLibraryAPI\BookLibraryAPI.csproj --launch-profile BookLibraryAPI
-```
-
-Go to swagger page 
-
-    https://localhost:7098/swagger/index.html
 
 You can see 5 request for events and 2 for register/login.
 
